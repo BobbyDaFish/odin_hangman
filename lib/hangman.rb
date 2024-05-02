@@ -18,12 +18,11 @@ class Game
   end
 
   def save_game(answer, board, health, alphabet)
-    state = { 'answer' => answer, 'board' => board, 'health' => health, 'alphabet' => alphabet }.to_s
+    state = { 'answer' => answer, 'board' => board, 'health' => health, 'alphabet' => alphabet }
     save_file = save_file_check
-    save_data = JSON.parse(state.gsub('=>', ': '))
 
     File.open(save_file, 'w') do |json|
-      json << save_data
+      json << state.to_s.gsub('=>', ': ')
     end
   end
 
@@ -32,10 +31,21 @@ class Game
     File.open('../save_game.json')
   end
 
+  def load_save_file
+    save_file = File.open('../save_game.json')
+    json = save_file.readline
+    JSON.parse(json,  {symbolize_names: true })
+  end
 end
 
-alphabet = %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
 hangman = Game.new
-answer = hangman.new_answer
-board = Array.new(answer.length, '_')
-health = 5
+state = {
+  answer: hangman.new_answer,
+  board: Array.new(1, '_'),
+  health: 5,
+  alphabet: %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
+}
+state[:board] = Array.new(state[:answer].length, '_')
+hangman.save_game(state[:answer], state[:board], state[:health], state[:alphabet])
+state = hangman.load_save_file
+puts state
