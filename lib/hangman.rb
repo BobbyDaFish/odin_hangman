@@ -34,7 +34,21 @@ class Game
   def load_save_file
     save_file = File.open('../save_game.json')
     json = save_file.readline
-    JSON.parse(json,  {symbolize_names: true })
+    JSON.parse(json, { symbolize_names: true })
+  end
+
+  def get_player_choice(state)
+    puts 'Choose a letter'
+    valid_player_choice(gets.chop.downcase, state)
+  end
+
+  def valid_player_choice(letter, state)
+    l = letter
+    until state[:alphabet].any?(l)
+      puts 'Invalid choice, please select one letter from the available letters.'
+      l = gets.chop.downcase
+    end
+    l
   end
 end
 
@@ -46,6 +60,5 @@ state = {
   alphabet: %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
 }
 state[:board] = Array.new(state[:answer].length, '_')
-hangman.save_game(state[:answer], state[:board], state[:health], state[:alphabet])
-state = hangman.load_save_file
-puts state
+# hangman.save_game(state[:answer], state[:board], state[:health], state[:alphabet])
+# state = hangman.load_save_file
