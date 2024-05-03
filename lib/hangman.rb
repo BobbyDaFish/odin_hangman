@@ -12,9 +12,9 @@ class Game
     answer.split(//)
   end
 
-  def display_game(board, alphabet)
-    puts alphabet.join(', ')
+  def display_game(board, health)
     puts board.join(' ')
+    puts "Health: #{health}"
   end
 
   def save_game(answer, board, health, alphabet)
@@ -24,6 +24,7 @@ class Game
     File.open(save_file, 'w') do |json|
       json << state.to_s.gsub('=>', ': ')
     end
+    puts 'Game saved!'
   end
 
   def save_file_check
@@ -34,11 +35,14 @@ class Game
   def load_save_file
     save_file = File.open('../save_game.json')
     json = save_file.readline
-    JSON.parse(json, { symbolize_names: true })
+    state = JSON.parse(json, { symbolize_names: true })
+    puts "-----\n\nGame loaded!"
+    display_game(state[:board], state[:health])
+    state
   end
 
   def get_player_choice(state)
-    p state[:alphabet]
+    puts state[:alphabet].join(', ')
     puts 'Choose a letter from the remaining alphabet'
     valid_player_choice(gets.chop.downcase, state)
   end
@@ -111,11 +115,10 @@ state[:board] = Array.new(state[:answer].length, '_')
 if File.exist?('../save_game.json')
   puts 'Save game file found. Do you want to load your game? Input Y for yes, N for no.'
   state = hangman.load?(gets.chop.downcase, state)
-  puts "-----\n\nGame loaded!\n#{state[:board]}\nHealth: #{state[:health]}"
 end
 while state[:board].any?('_') && state[:health].positive?
   state = hangman.check_play(hangman.get_player_choice(state), state)
-  puts "#{state[:board]}\n Health remaining: #{state[:health]}"
+  hangman.display_game(state[:board], state[:health])
   puts 'Do you want to save your game?'
   hangman.save?(gets.chop.downcase, state)
 end
