@@ -117,8 +117,8 @@ if File.exist?('../save_game.json')
   state = hangman.load?(gets.chop.downcase, state)
 else
   puts 'No save data found, starting new game!'
-  puts state[:board].join(' ')
 end
+puts state[:board].join(' ')
 while state[:board].any?('_') && state[:health].positive?
   state = hangman.check_play(hangman.get_player_choice(state), state)
   hangman.display_game(state[:board], state[:health])
