@@ -111,14 +111,18 @@ state = {
   alphabet: %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
 }
 state[:board] = Array.new(state[:answer].length, '_')
+puts 'Let\'s play Hangman!'
 if File.exist?('../save_game.json')
   puts 'Save game file found. Do you want to load your game? Input Y for yes, N for no.'
   state = hangman.load?(gets.chop.downcase, state)
+else
+  puts 'No save data found, starting new game!'
+  puts state[:board].join(' ')
 end
 while state[:board].any?('_') && state[:health].positive?
   state = hangman.check_play(hangman.get_player_choice(state), state)
   hangman.display_game(state[:board], state[:health])
-  puts 'Do you want to save your game?'
+  puts 'Do you want to save your game? Input Y for yes, N for no.'
   hangman.save?(gets.chop.downcase, state)
 end
 if state[:health].zero?
